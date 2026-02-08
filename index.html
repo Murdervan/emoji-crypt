@@ -61,6 +61,7 @@ button:hover{background:rgba(0,255,0,.12)}
     <textarea id="plain" placeholder="type message..."></textarea>
 
     <div class="row" style="margin:12px 0">
+      <div class="small">short emojis • stealth</div>
       <button id="enc">ENCODE →</button>
       <div></div>
     </div>
@@ -126,12 +127,12 @@ dec.onclick = () => {
   decoded.value = b2t(bin);
 };
 
-// COPY OUTPUT BUTTON WITHOUT POPUP
+// COPY OUTPUT BUTTON
 document.getElementById("copyOut").onclick = () => {
   out.select();
   out.setSelectionRange(0, 99999);
   document.execCommand('copy');
-  // removed alert popup
+  alert('Emoji output copied to clipboard!');
 };
 </script>
 </body>
