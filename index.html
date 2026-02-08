@@ -85,7 +85,16 @@ button:hover{background:rgba(0,255,156,.08)}
 <script>
 // ultra-korte emojis
 // base emoji pool (used to pick 5–7 per encode)
-const EMOJI_POOL = ["😀","😐","😶","🙂","😎","🤖","👾","🧠","😈","🕶️","⚡","💾",":dollar:",":skull_crossbones:",":tada:",":man_in_manual_wheelchair:",":mute:",":rotating_light:"]; // 8 korte emojis (<10) // korte, neutrale
+const EMOJI_POOL = [
+  // faces / reactions
+  "😀","😐","😶","🙂","😎","🤯","😴","🤔",
+  // tech / hacker / sci‑fi
+  "🤖","👾","🧠","🛰️","📡","🖥️",
+  // signals / energy / alerts
+  "⚡","🚨","💾","🔋","📶","🧲",
+  // stealth / fun / misc
+  "♿","🕶️","😈","👁️","🗝️","🔒"
+];
 // base-N encoding (SHORT MODE)
 // each emoji represents 3 bits (base‑8) instead of 1 bit
 const ZW = ["​","‌","‍","⁠","⁡","⁢","⁣","⁤"]; // 0–7
