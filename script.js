@@ -4,7 +4,6 @@ const ZERO = {
   1: "\u200C", // zero width non joiner
 };
 
-// Funktion: tekst → binær
 function textToBinary(str) {
   return str
     .split("")
@@ -12,7 +11,6 @@ function textToBinary(str) {
     .join("");
 }
 
-// Funktion: binær → zero‑width
 function binaryToZW(bin) {
   return bin
     .split("")
@@ -20,7 +18,6 @@ function binaryToZW(bin) {
     .join("");
 }
 
-// Funktion: zero‑width → binær
 function zwToBinary(zwStr) {
   let rev = "";
   for (let ch of zwStr) {
@@ -30,7 +27,6 @@ function zwToBinary(zwStr) {
   return rev;
 }
 
-// Funktion: binær → tekst
 function binaryToText(bin) {
   let text = "";
   for (let i = 0; i < bin.length; i += 8) {
@@ -40,31 +36,29 @@ function binaryToText(bin) {
   return text;
 }
 
-// Encode knap
-document
-  .getElementById("encodeBtn")
-  .addEventListener("click", () => {
-    let plain = document.getElementById("plainText").value;
-    let bin = textToBinary(plain);
-    let zw = binaryToZW(bin);
-    let emojis = "😀😃😄😁"; // du kan randomisere senere
-    let result = "";
-    for (let i = 0; i < zw.length; i++) {
-      result += emojis[i % emojis.length] + zw[i];
-    }
-    document.getElementById("emojiText").value = result;
-  });
+// Encode knap - Nu med kun én emoji
+document.getElementById("encodeBtn").addEventListener("click", () => {
+  let plain = document.getElementById("plainText").value;
+  let bin = textToBinary(plain);
+  let zw = binaryToZW(bin);
+
+  // Vi vælger én emoji og klistrer hele zw-strengen bagpå
+  let baseEmoji = "🤫"; 
+  let result = baseEmoji + zw;
+
+  document.getElementById("emojiText").value = result;
+});
 
 // Decode knap
-document
-  .getElementById("decodeBtn")
-  .addEventListener("click", () => {
-    let emojiStr = document.getElementById("emojiText").value;
-    // filtrer zero‑width ud
-    let zwOnly = [...emojiStr].filter((c) =>
-      c === ZERO[0] || c === ZERO[1]
-    );
-    let bin = zwToBinary(zwOnly.join(""));
-    let text = binaryToText(bin);
-    document.getElementById("decodedText").value = text;
-  });
+document.getElementById("decodeBtn").addEventListener("click", () => {
+  let emojiStr = document.getElementById("emojiText").value;
+
+  // Finder alle de usynlige tegn i hele strengen
+  let zwOnly = [...emojiStr].filter((c) =>
+    c === ZERO[0] || c === ZERO[1]
+  );
+
+  let bin = zwToBinary(zwOnly.join(""));
+  let text = binaryToText(bin);
+  document.getElementById("decodedText").value = text;
+});
