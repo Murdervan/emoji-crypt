@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Emoji Crypt</title>
+
 <style>
 :root{
   --bg:#040607;
@@ -29,11 +30,10 @@ body{
   color:var(--green);
   display:flex;
   align-items:center;
-  gap:2px; 
+  gap:2px;
   margin-bottom:18px;
-  flex-wrap:wrap;
 }
-#title{white-space:nowrap;} 
+#title{white-space:nowrap;}
 .cursor{
   width:6px;
   height:26px;
@@ -50,17 +50,16 @@ body{
   box-shadow: var(--glow-green), 0 0 0 1px #020406 inset;
 }
 label{font-size:12px; opacity:.8}
-textarea{
+textarea,input{
   width:100%;
-  min-height:88px;
+  min-height:64px;
   margin-top:6px;
   padding:12px;
-  resize:vertical;
   background:#020405;
   color:var(--text);
   border:1px solid var(--green);
   border-radius:10px;
-  box-shadow: inset 0 0 10px rgba(0,255,0,.15), var(--glow-green);
+  font-family:inherit;
 }
 .row{
   display:flex;
@@ -89,16 +88,6 @@ button:hover{background:rgba(0,255,0,.12)}
 }
 .button-red:hover{background:rgba(255,68,68,.12)}
 .footer{opacity:.6; font-size:11px; margin-top:10px}
-
-/* MOBILE */
-@media(max-width:600px){
-  .container{padding:12px; margin:4vh auto;}
-  .header{font-size:20px}
-  .cursor{width:4px; height:20px}
-  textarea{min-height:64px}
-  .row{flex-direction:column; align-items:stretch;}
-  button{width:100%;}
-}
 </style>
 </head>
 
@@ -115,12 +104,15 @@ button:hover{background:rgba(0,255,0,.12)}
     <label>PLAINTEXT</label>
     <textarea id="plain" placeholder="type message..."></textarea>
 
+    <label>CHOOSE ONE EMOJI (carrier)</label>
+    <input id="carrier" placeholder="😀">
+
     <div class="row" style="margin:12px 0">
       <button id="enc">ENCODE →</button>
     </div>
 
-    <label>EMOJI OUTPUT</label>
-    <textarea id="out" placeholder="😀😀😀"></textarea>
+    <label>EMOJI OUTPUT (ONE EMOJI)</label>
+    <textarea id="out" placeholder="😀"></textarea>
 
     <div class="row left-align" style="margin-top:6px;">
       <button id="copyOut">COPY OUTPUT</button>
@@ -135,10 +127,7 @@ button:hover{background:rgba(0,255,0,.12)}
     <textarea id="decoded" placeholder="decoded text..."></textarea>
 
     <div class="footer">
-      client-side • zero-width • educational •
-      <a href="https://github.com/murdervan" target="_blank" style="color:var(--green); text-decoration:none">
-        github/murdervan
-      </a>
+      client-side • zero-width • no logs • github/murdervan
     </div>
   </div>
 </div>
@@ -155,40 +144,35 @@ const titleEl = document.getElementById("title");
   }
 })();
 
-// EMOJI ENGINE
-const EMOJI_POOL = [
-"😀","😐","😶","🙂","😎","🤯","😴","🤔","😈","🤖",
-"🧠","👁️","🕶️","😵","🥶","🥵","😇","🤓","🤡","😜",
-"👾","🖥️","💻","🛰️","📡","📟","💾","🔋","⚡","📶",
-"🔒","🗝️","🧲","🧬","🦾","🛸","🕳️","📀","📼","🖱️",
-"🚨","⚠️","☢️","☣️","🔮","♿","🧪","🧹","📦","🛠️"
-];
+// ZERO WIDTH MAP
+const ZERO = {0:"\u200B",1:"\u200C"};
 
-const ZW=["\u200B","\u200C","\u200D","\u2060","\u2061","\u2062","\u2063","\u2064"];
-const t2b=s=>[...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
-const b2t=b=>{let o="";for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));return o;};
+// HELPERS
+const t2b = s => [...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
+const b2t = b => {
+  let o="";
+  for(let i=0;i<b.length;i+=8){
+    o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));
+  }
+  return o;
+};
 
-// ENCODE
-enc.onclick=()=>{
-  const bin=t2b(plain.value);
-  const chunks=bin.match(/.{1,3}/g)||[];
-  const carriers=[...EMOJI_POOL].sort(()=>0.5-Math.random()).slice(0,10+Math.floor(Math.random()*3));
-  let res="";
-  chunks.forEach((c,i)=>{
-    const v=parseInt(c.padEnd(3,"0"),2);
-    res+=carriers[i%carriers.length]+ZW[v];
-  });
-  out.value=res;
+// ENCODE (ONE EMOJI)
+enc.onclick = ()=>{
+  if(!plain.value) return;
+  const emoji = carrier.value.trim() || "😀";
+  const bin = t2b(plain.value);
+  const zw = [...bin].map(b=>ZERO[b]).join("");
+  out.value = emoji + zw;
 };
 
 // DECODE
-dec.onclick=()=>{
-  let src = out.value.trim() || decoded.value.trim();
+dec.onclick = ()=>{
+  const src = out.value.trim();
   if(!src) return;
-  const zw=[...src].filter(c=>ZW.includes(c));
-  let bin="";
-  zw.forEach(c=>bin+=ZW.indexOf(c).toString(2).padStart(3,"0"));
-  decoded.value=b2t(bin);
+  const zw = [...src].slice(1).filter(c=>c===ZERO[0]||c===ZERO[1]).join("");
+  const bin = [...zw].map(c=>c===ZERO[0]?"0":"1").join("");
+  decoded.value = b2t(bin);
 };
 
 // COPY
@@ -197,12 +181,12 @@ copyOut.onclick=()=>{
   document.execCommand("copy");
 };
 
-// CLEAR / NEW DECODE
+// CLEAR
 fresh.onclick=()=>{
   plain.value="";
   out.value="";
   decoded.value="";
-  decoded.focus();
+  carrier.value="";
 };
 </script>
 </body>
