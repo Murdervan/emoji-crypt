@@ -25,6 +25,7 @@ body{
 }
 .cursor{width:6px; height:26px; background:var(--green); animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
+#title{white-space:nowrap}
 .panel{
   background:linear-gradient(180deg, #070c10, var(--panel));
   border:1px solid var(--green);
@@ -47,14 +48,13 @@ button{
   box-shadow: var(--glow);
 }
 button:hover{background:rgba(0,255,0,.12)}
-button:hover{background:rgba(0,255,156,.08)}
 .footer{opacity:.6; font-size:11px; margin-top:10px}
 .small{font-size:12px; opacity:.8}
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">EMOJI CRYPT<div class="cursor"></div></div>
+  <div class="header"><span id="title"></span><div class="cursor" id="cursor"></div></div>
 
   <div class="panel">
     <label>PLAINTEXT</label>
@@ -68,6 +68,7 @@ button:hover{background:rgba(0,255,156,.08)}
 
     <label>EMOJI OUTPUT</label>
     <textarea id="out" placeholder="😀😀😀"></textarea>
+    <button id="copyOut" style="margin-top:6px;">COPY OUTPUT</button>
 
     <div class="row" style="margin:12px 0">
       <div></div>
@@ -83,47 +84,55 @@ button:hover{background:rgba(0,255,156,.08)}
 </div>
 
 <script>
-// ultra-korte emojis
-// base emoji pool (used to pick 5–7 per encode)
-const EMOJI_POOL = [
-  // faces / reactions
-  "😀","😐","😶","🙂","😎","🤯","😴","🤔",
-  // tech / hacker / sci‑fi
-  "🤖","👾","🧠","🛰️","📡","🖥️",
-  // signals / energy / alerts
-  "⚡","🚨","💾","🔋","📶","🧲",
-  // stealth / fun / misc
-  "♿","🕶️","😈","👁️","🗝️","🔒"
-];
-// base-N encoding (SHORT MODE)
-// each emoji represents 3 bits (base‑8) instead of 1 bit
-const ZW = ["​","‌","‍","⁠","⁡","⁢","⁣","⁤"]; // 0–7
+// TYPEWRITER TITLE
+const titleText = "EMOJI CRYPT BY MURDERVAN";
+const titleEl = document.getElementById("title");
+const cursorEl = document.getElementById("cursor");
+let i = 0;
+cursorEl.style.opacity = 0;
+function typeWriter(){
+  if(i < titleText.length){
+    titleEl.textContent += titleText.charAt(i);
+    i++;
+    setTimeout(typeWriter, 90);
+  } else {
+    cursorEl.style.opacity = 1;
+  }
+}
+typeWriter();
 
+// EMOJI ENCODE / DECODE
+const EMOJI_POOL = ["😀","😐","😶","🙂","😎","🤯","😴","🤔","🤖","👾","🧠","🛰️","📡","🖥️","⚡","🚨","💾","🔋","📶","🧲","♿","🕶️","😈","👁️","🗝️","🔒"];
+const ZW = ["\u200B","\u200C","\u200D","\u2060","\u2061","\u2062","\u2063","\u2064"];
 const t2b = s => s.split("").map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
 const b2t = b => {let o=""; for(let i=0;i<b.length;i+=8) o+=String.fromCharCode(parseInt(b.slice(i,i+8),2)); return o};
 
 enc.onclick = () => {
   const bin = t2b(plain.value);
-
-  // split binary into 3‑bit chunks
   const chunks = bin.match(/.{1,3}/g) || [];
-
-  const count = 5 + Math.floor(Math.random()*3); // 5–7 emojis
-  const emojis = [...EMOJI_POOL].sort(()=>0.5-Math.random()).slice(0,count);
-
+  const count = 4 + Math.floor(Math.random()*3);
+  const carriers = [...EMOJI_POOL].sort(()=>0.5-Math.random()).slice(0,count);
   let res = "";
   for(let i=0;i<chunks.length;i++){
-    const v = parseInt(chunks[i].padEnd(3,"0"),2); // 0–7
-    res += emojis[i%emojis.length] + ZW[v];
+    const v = parseInt(chunks[i].padEnd(3,"0"),2);
+    res += carriers[i % carriers.length] + ZW[v];
   }
   out.value = res;
 };
 
 dec.onclick = () => {
-  const zw = [...out.value].filter(c=>ZW.includes(c));
+  const zw = [...out.value].filter(c => ZW.includes(c));
   let bin = "";
-  zw.forEach(c=>{ bin += ZW.indexOf(c).toString(2).padStart(3,"0"); });
+  zw.forEach(c => { bin += ZW.indexOf(c).toString(2).padStart(3,"0"); });
   decoded.value = b2t(bin);
+};
+
+// COPY OUTPUT BUTTON
+document.getElementById("copyOut").onclick = () => {
+  out.select();
+  out.setSelectionRange(0, 99999);
+  document.execCommand('copy');
+  alert('Emoji output copied to clipboard!');
 };
 </script>
 </body>
