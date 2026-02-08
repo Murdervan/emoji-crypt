@@ -111,7 +111,19 @@ function typeWriter(){
 typeWriter();
 
 // EMOJI ENCODE / DECODE
-const EMOJI_POOL = ["😀","😐","😶","🙂","😎","🤯","😴","🤔","🤖","👾","🧠","🛰️","📡","🖥️","⚡","🚨","💾","🔋","📶","🧲","♿","🕶️","😈","👁️","🗝️","🔒"];
+const EMOJI_POOL = const EMOJI_POOL = [
+  // Faces / expressions
+  "😀","😐","😶","🙂","😎","🤯","😴","🤔","😈","🤖",
+  "🧠","👁️","🕶️","😵","🥶","🥵","😇","🤓","🤡","😜",
+
+  // Hacker / tech
+  "👾","🖥️","💻","🛰️","📡","📟","💾","🔋","⚡","📶",
+  "🔒","🗝️","🧲","🧬","🦾","🛸","🕳️","📀","📼","🖱️",
+
+  // Alerts / symbols / fun
+  "🚨","⚠️","☢️","☣️","🔮","♿","🧪","🧹","📦","🛠️"
+];
+
 const ZW = ["\u200B","\u200C","\u200D","\u2060","\u2061","\u2062","\u2063","\u2064"];
 const t2b = s => s.split("").map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
 const b2t = b => {let o=""; for(let i=0;i<b.length;i+=8) o+=String.fromCharCode(parseInt(b.slice(i,i+8),2)); return o};
@@ -120,7 +132,7 @@ const b2t = b => {let o=""; for(let i=0;i<b.length;i+=8) o+=String.fromCharCode(
 enc.onclick = () => {
   const bin = t2b(plain.value);
   const chunks = bin.match(/.{1,3}/g) || [];
-  const count = 4 + Math.floor(Math.random()*3);
+  const count = 10 + Math.floor(Math.random()*3);
   const carriers = [...EMOJI_POOL].sort(()=>0.5-Math.random()).slice(0,count);
   let res = "";
   for(let i=0;i<chunks.length;i++){
