@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Emoji Crypt</title>
+<style>
+:root{
+  --bg:#040607;
+  --panel:#070b0f;
+  --green:#00ff00;
+  --red:#ff4444;
+  --glow-green:0 0 8px rgba(0,255,0,.6), 0 0 20px rgba(0,255,0,.35);
+  --glow-red:0 0 8px rgba(255,68,68,.6), 0 0 20px rgba(255,68,68,.35);
+  --text:#caffd8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(1200px 600px at 50% -10%, #0f1720, var(--bg));
+  color:var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.container{max-width:760px; margin:8vh auto; padding:24px}
+.header{
+  font-size:28px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--green);
+  display:flex;
+  align-items:center;
+  gap:2px; 
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+#title{white-space:nowrap;} 
+.cursor{
+  width:6px;
+  height:26px;
+  background:var(--green);
+  animation:blink 1s steps(1) infinite
+}
+@keyframes blink{50%{opacity:0}}
+
+.panel{
+  background:linear-gradient(180deg, #070c10, var(--panel));
+  border:1px solid var(--green);
+  border-radius:12px;
+  padding:16px;
+  box-shadow: var(--glow-green), 0 0 0 1px #020406 inset;
+}
+label{font-size:12px; opacity:.8}
+textarea{
+  width:100%;
+  min-height:88px;
+  margin-top:6px;
+  padding:12px;
+  resize:vertical;
+  background:#020405;
+  color:var(--text);
+  border:1px solid var(--green);
+  border-radius:10px;
+  box-shadow: inset 0 0 10px rgba(0,255,0,.15), var(--glow-green);
+}
+.row{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap
+}
+.left-align{justify-content:flex-start}
+button{
+  background:transparent;
+  color:var(--green);
+  border:1px solid var(--green);
+  padding:6px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  box-shadow: var(--glow-green);
+  font-size:12px;
+}
+button:hover{background:rgba(0,255,0,.12)}
+.button-red{
+  color:var(--red);
+  border:1px solid var(--red);
+  box-shadow: var(--glow-red);
+}
+.button-red:hover{background:rgba(255,68,68,.12)}
+.footer{opacity:.6; font-size:11px; margin-top:10px}
+
+/* MOBILE */
+@media(max-width:600px){
+  .container{padding:12px; margin:4vh auto;}
+  .header{font-size:20px}
+  .cursor{width:4px; height:20px}
+  textarea{min-height:64px}
+  .row{flex-direction:column; align-items:stretch;}
+  button{width:100%;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span id="title"></span>
+    <div class="cursor"></div>
+  </div>
+
+  <div class="panel">
+    <label>PLAINTEXT</label>
+    <textarea id="plain" placeholder="type message..."></textarea>
+
+    <div class="row" style="margin:12px 0">
+      <button id="enc">ENCODE →</button>
+    </div>
+
+    <label>EMOJI OUTPUT</label>
+    <textarea id="out" placeholder="😀😀😀"></textarea>
+
+    <div class="row left-align" style="margin-top:6px;">
+      <button id="copyOut">COPY OUTPUT</button>
+    </div>
+
+    <div class="row" style="margin:12px 0">
+      <button id="fresh" class="button-red">CLEAR TO DECODE NEW PM</button>
+      <button id="dec">DECODE →</button>
+    </div>
+
+    <label>DECODE EMOJI HERE</label>
+    <textarea id="decoded" placeholder="decoded text..."></textarea>
+
+    <div class="footer">
+      client-side • zero-width • educational •
+      <a href="https://github.com/murdervan" target="_blank" style="color:var(--green); text-decoration:none">
+        github/murdervan
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// TYPEWRITER TITLE
+const titleText = ">EMOJI_CRYPT_BY_MURDERVAN";
+let ti = 0;
+const titleEl = document.getElementById("title");
+(function type(){
+  if(ti < titleText.length){
+    titleEl.textContent += titleText[ti++];
+    setTimeout(type, 90);
+  }
+})();
+
+// EMOJI ENGINE
+const EMOJI_POOL = [
+"😀","😐","😶","🙂","😎","🤯","😴","🤔","😈","🤖",
+"🧠","👁️","🕶️","😵","🥶","🥵","😇","🤓","🤡","😜",
+"👾","🖥️","💻","🛰️","📡","📟","💾","🔋","⚡","📶",
+"🔒","🗝️","🧲","🧬","🦾","🛸","🕳️","📀","📼","🖱️",
+"🚨","⚠️","☢️","☣️","🔮","♿","🧪","🧹","📦","🛠️"
+];
+
+const ZW=["\u200B","\u200C","\u200D","\u2060","\u2061","\u2062","\u2063","\u2064"];
+const t2b=s=>[...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
+const b2t=b=>{let o="";for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));return o;};
+
+// ENCODE
+enc.onclick=()=>{
+  const bin=t2b(plain.value);
+  const chunks=bin.match(/.{1,3}/g)||[];
+  const carriers=[...EMOJI_POOL].sort(()=>0.5-Math.random()).slice(0,10+Math.floor(Math.random()*3));
+  let res="";
+  chunks.forEach((c,i)=>{
+    const v=parseInt(c.padEnd(3,"0"),2);
+    res+=carriers[i%carriers.length]+ZW[v];
+  });
+  out.value=res;
+};
+
+// DECODE
+dec.onclick=()=>{
+  let src = out.value.trim() || decoded.value.trim();
+  if(!src) return;
+  const zw=[...src].filter(c=>ZW.includes(c));
+  let bin="";
+  zw.forEach(c=>bin+=ZW.indexOf(c).toString(2).padStart(3,"0"));
+  decoded.value=b2t(bin);
+};
+
+// COPY
+copyOut.onclick=()=>{
+  out.select();
+  document.execCommand("copy");
+};
+
+// CLEAR / NEW DECODE
+fresh.onclick=()=>{
+  plain.value="";
+  out.value="";
+  decoded.value="";
+  decoded.focus();
+};
+</script>
+</body>
+</html>
