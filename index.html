@@ -27,7 +27,7 @@ body{
   color:var(--green);
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:2px; /* tættere cursor */
   margin-bottom:18px;
   flex-wrap:wrap;
 }
@@ -114,7 +114,7 @@ button:hover{background:rgba(0,255,0,.12)}
 
     <div class="row left-align" style="margin-top:6px;">
       <button id="copyOut">COPY OUTPUT</button>
-      <button id="fresh">CLEAR / PASTE NEW DECODE MESSAGE</button>
+      <button id="fresh" style="padding:4px 8px; font-size:11px;">CLEAR TO DECODE NEW PM</button>
     </div>
 
     <div class="row" style="margin:12px 0">
@@ -156,7 +156,7 @@ const EMOJI_POOL = [
 
 const ZW=["\u200B","\u200C","\u200D","\u2060","\u2061","\u2062","\u2063","\u2064"];
 const t2b=s=>[...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
-const b2t=b=>{let o="";for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));return o};
+const b2t=b=>{let o="";for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));return o;};
 
 // ENCODE
 enc.onclick=()=>{
@@ -192,7 +192,7 @@ fresh.onclick=()=>{
   plain.value="";
   out.value="";
   decoded.value="";
-  decoded.focus(); // <- cursor i nederste felt
+  decoded.focus(); // cursor i nederste felt
 };
 </script>
 </body>
