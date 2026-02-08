@@ -127,12 +127,12 @@ dec.onclick = () => {
   decoded.value = b2t(bin);
 };
 
-// COPY OUTPUT BUTTON
+// COPY OUTPUT BUTTON WITHOUT POPUP
 document.getElementById("copyOut").onclick = () => {
   out.select();
   out.setSelectionRange(0, 99999);
   document.execCommand('copy');
-  alert('Emoji output copied to clipboard!');
+  // removed alert popup
 };
 </script>
 </body>
