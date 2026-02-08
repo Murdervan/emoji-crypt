@@ -162,12 +162,12 @@ enc.onclick=()=>{
   out.value=emoji+zw;
 };
 
-// DECODE (from bottom box → plaintext)
+// DECODE 
 dec.onclick=()=>{
   if(!decodeIn.value) return;
   const zw=[...decodeIn.value].slice(1).filter(c=>c===Z0||c===Z1);
   const bin=zw.map(c=>c===Z0?"0":"1").join("");
-  plain.value=b2t(bin);
+  decodeIn.value=b2t(bin);
 };
 
 // COPY
