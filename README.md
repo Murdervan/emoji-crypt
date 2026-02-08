@@ -1,4 +1,5 @@
 # emoji-crypt
 
 Experimental emoji cryptography for educational use only
-make it ready for raspberry pi 
+
+a project for raspberry pi im trying
