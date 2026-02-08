@@ -27,11 +27,11 @@ body{
   color:var(--green);
   display:flex;
   align-items:center;
-  gap:2px; /* tættere cursor */
+  gap:2px; /* mindre gap */
   margin-bottom:18px;
   flex-wrap:wrap;
 }
-#title{white-space:nowrap; flex:1}
+#title{white-space:nowrap;} /* fjernet flex:1 for mindre mellemrum */
 .cursor{
   width:6px;
   height:26px;
@@ -88,7 +88,8 @@ button:hover{background:rgba(0,255,0,.12)}
   .header{font-size:20px}
   .cursor{width:4px; height:20px}
   textarea{min-height:64px}
-  .row{flex-direction:column}
+  .row{flex-direction:column; align-items:stretch;}
+  button{width:100%;}
 }
 </style>
 </head>
@@ -96,6 +97,7 @@ button:hover{background:rgba(0,255,0,.12)}
 <body>
 <div class="container">
 
+  <!-- HEADER -->
   <div class="header">
     <span id="title"></span>
     <div class="cursor"></div>
@@ -110,19 +112,19 @@ button:hover{background:rgba(0,255,0,.12)}
     </div>
 
     <label>EMOJI OUTPUT</label>
-    <textarea id="out" placeholder="paste emoji code here"></textarea>
+    <textarea id="out" placeholder="😀😀😀"></textarea>
 
     <div class="row left-align" style="margin-top:6px;">
       <button id="copyOut">COPY OUTPUT</button>
-      <button id="fresh" style="padding:4px 8px; font-size:11px;">CLEAR TO DECODE NEW PM</button>
     </div>
 
     <div class="row" style="margin:12px 0">
       <button id="dec">DECODE →</button>
+      <button id="fresh" style="padding:4px 8px; font-size:11px;">CLEAR TO DECODE NEW PM</button>
     </div>
 
     <label>DECODE EMOJI HERE</label>
-    <textarea id="decoded" placeholder="decoded text"></textarea>
+    <textarea id="decoded" placeholder="decoded text..."></textarea>
 
     <div class="footer">
       client-side • zero-width • educational •
@@ -171,7 +173,7 @@ enc.onclick=()=>{
   out.value=res;
 };
 
-// DECODE (fra out eller decoded)
+// DECODE
 dec.onclick=()=>{
   let src = out.value.trim() || decoded.value.trim();
   if(!src) return;
@@ -192,7 +194,7 @@ fresh.onclick=()=>{
   plain.value="";
   out.value="";
   decoded.value="";
-  decoded.focus(); // cursor i nederste felt
+  decoded.focus();
 };
 </script>
 </body>
