@@ -52,7 +52,6 @@ body{
 label{font-size:12px; opacity:.8}
 textarea,input{
   width:100%;
-  min-height:64px;
   margin-top:6px;
   padding:12px;
   background:#020405;
@@ -61,6 +60,7 @@ textarea,input{
   border-radius:10px;
   font-family:inherit;
 }
+textarea{min-height:88px}
 .row{
   display:flex;
   justify-content:center;
@@ -94,24 +94,22 @@ button:hover{background:rgba(0,255,0,.12)}
 <body>
 <div class="container">
 
-  <!-- HEADER -->
   <div class="header">
     <span id="title"></span>
     <div class="cursor"></div>
   </div>
 
   <div class="panel">
+
     <label>PLAINTEXT</label>
     <textarea id="plain" placeholder="type message..."></textarea>
 
-    <label>CHOOSE ONE EMOJI (carrier)</label>
-    <input id="carrier" placeholder="😀">
-
     <div class="row" style="margin:12px 0">
+      <input id="carrier" placeholder="emoji" style="max-width:90px;text-align:center">
       <button id="enc">ENCODE →</button>
     </div>
 
-    <label>EMOJI OUTPUT (ONE EMOJI)</label>
+    <label>EMOJI OUTPUT</label>
     <textarea id="out" placeholder="😀"></textarea>
 
     <div class="row left-align" style="margin-top:6px;">
@@ -119,60 +117,55 @@ button:hover{background:rgba(0,255,0,.12)}
     </div>
 
     <div class="row" style="margin:12px 0">
-      <button id="fresh" class="button-red">CLEAR TO DECODE NEW PM</button>
+      <button id="fresh" class="button-red">CLEAR</button>
       <button id="dec">DECODE →</button>
     </div>
 
-    <label>DECODE EMOJI HERE</label>
+    <label>DECODED TEXT</label>
     <textarea id="decoded" placeholder="decoded text..."></textarea>
 
     <div class="footer">
-      client-side • zero-width • no logs • github/murdervan
+      client-side • one emoji • zero-width • no logs
     </div>
   </div>
 </div>
 
 <script>
-// TYPEWRITER TITLE
-const titleText = ">EMOJI_CRYPT_BY_MURDERVAN";
-let ti = 0;
-const titleEl = document.getElementById("title");
+// TYPEWRITER
+const titleText=">EMOJI_CRYPT_BY_MURDERVAN";
+let ti=0;
 (function type(){
-  if(ti < titleText.length){
-    titleEl.textContent += titleText[ti++];
-    setTimeout(type, 90);
+  if(ti<titleText.length){
+    title.textContent+=titleText[ti++];
+    setTimeout(type,90);
   }
 })();
 
-// ZERO WIDTH MAP
-const ZERO = {0:"\u200B",1:"\u200C"};
+// ZERO WIDTH
+const Z0="\u200B", Z1="\u200C";
 
-// HELPERS
-const t2b = s => [...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
-const b2t = b => {
+const t2b=s=>[...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
+const b2t=b=>{
   let o="";
-  for(let i=0;i<b.length;i+=8){
-    o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));
-  }
+  for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));
   return o;
 };
 
-// ENCODE (ONE EMOJI)
-enc.onclick = ()=>{
+// ENCODE
+enc.onclick=()=>{
   if(!plain.value) return;
-  const emoji = carrier.value.trim() || "😀";
-  const bin = t2b(plain.value);
-  const zw = [...bin].map(b=>ZERO[b]).join("");
-  out.value = emoji + zw;
+  const e=carrier.value.trim()||"😀";
+  const bin=t2b(plain.value);
+  const zw=[...bin].map(b=>b==="0"?Z0:Z1).join("");
+  out.value=e+zw;
 };
 
 // DECODE
-dec.onclick = ()=>{
-  const src = out.value.trim();
-  if(!src) return;
-  const zw = [...src].slice(1).filter(c=>c===ZERO[0]||c===ZERO[1]).join("");
-  const bin = [...zw].map(c=>c===ZERO[0]?"0":"1").join("");
-  decoded.value = b2t(bin);
+dec.onclick=()=>{
+  if(!out.value) return;
+  const zw=[...out.value].slice(1).filter(c=>c===Z0||c===Z1);
+  const bin=zw.map(c=>c===Z0?"0":"1").join("");
+  decoded.value=b2t(bin);
 };
 
 // COPY
