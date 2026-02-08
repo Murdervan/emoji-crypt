@@ -105,7 +105,7 @@ button:hover{background:rgba(0,255,0,.12)}
     <textarea id="plain" placeholder="type message..."></textarea>
 
     <div class="row" style="margin:12px 0">
-      <input id="carrier" placeholder="emoji" style="max-width:90px;text-align:center">
+      <input id="carrier" placeholder="emoji" style="max-width:70px;text-align:center">
       <button id="enc">ENCODE →</button>
     </div>
 
@@ -121,8 +121,8 @@ button:hover{background:rgba(0,255,0,.12)}
       <button id="dec">DECODE →</button>
     </div>
 
-    <label>DECODED TEXT</label>
-    <textarea id="decoded" placeholder="decoded text..."></textarea>
+    <label>DECODE EMOJI HERE</label>
+    <textarea id="decodeIn" placeholder="decoded text..."></textarea>
 
     <div class="footer">
       client-side • one emoji • zero-width • no logs
@@ -147,25 +147,27 @@ const Z0="\u200B", Z1="\u200C";
 const t2b=s=>[...s].map(c=>c.charCodeAt(0).toString(2).padStart(8,"0")).join("");
 const b2t=b=>{
   let o="";
-  for(let i=0;i<b.length;i+=8)o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));
+  for(let i=0;i<b.length;i+=8){
+    o+=String.fromCharCode(parseInt(b.slice(i,i+8),2));
+  }
   return o;
 };
 
 // ENCODE
 enc.onclick=()=>{
   if(!plain.value) return;
-  const e=carrier.value.trim()||"😀";
+  const emoji=carrier.value.trim()||"😀";
   const bin=t2b(plain.value);
   const zw=[...bin].map(b=>b==="0"?Z0:Z1).join("");
-  out.value=e+zw;
+  out.value=emoji+zw;
 };
 
-// DECODE
+// DECODE (from bottom box → plaintext)
 dec.onclick=()=>{
-  if(!out.value) return;
-  const zw=[...out.value].slice(1).filter(c=>c===Z0||c===Z1);
+  if(!decodeIn.value) return;
+  const zw=[...decodeIn.value].slice(1).filter(c=>c===Z0||c===Z1);
   const bin=zw.map(c=>c===Z0?"0":"1").join("");
-  decoded.value=b2t(bin);
+  plain.value=b2t(bin);
 };
 
 // COPY
@@ -178,7 +180,7 @@ copyOut.onclick=()=>{
 fresh.onclick=()=>{
   plain.value="";
   out.value="";
-  decoded.value="";
+  decodeIn.value="";
   carrier.value="";
 };
 </script>
