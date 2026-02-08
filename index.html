@@ -17,10 +17,26 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  background:radial-gradient(1200px 600px at 50% -10%, #0f1720, var(--bg));
-  color:var(--text);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    radial-gradient(1200px 600px at 50% -10%, #0c1518, #040607);
+  color: var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
+
 .container{max-width:760px; margin:8vh auto; padding:24px}
 .header{
   font-size:28px;
@@ -135,25 +151,34 @@ button:hover{background:rgba(0,255,0,.12)}
     <textarea id="decoded" placeholder="decoded text..."></textarea>
 
     <div class="footer">
-      client-side • zero-width • educational •
+      client-side • zero-width • educational • no logs •
       <a href="https://github.com/murdervan" target="_blank" style="color:var(--green); text-decoration:none">
         github/murdervan
-      </a>
+        </a>
     </div>
   </div>
 </div>
 
 <script>
-// TYPEWRITER TITLE
-const titleText = ">EMOJI_CRYPT_BY_MURDERVAN";
-let ti = 0;
-const titleEl = document.getElementById("title");
+// GLITCH TITLE
+const base = ">EMOJI_CRYPT // BY_MURDERVAN";
+const title = document.getElementById("title");
+let i=0;
 (function type(){
-  if(ti < titleText.length){
-    titleEl.textContent += titleText[ti++];
-    setTimeout(type, 90);
+  if(i<base.length){
+    title.textContent+=base[i++];
+    setTimeout(type,70);
   }
 })();
+setInterval(()=>{
+  if(Math.random()<0.15){
+    const arr=title.textContent.split("");
+    const p=Math.floor(Math.random()*arr.length);
+    arr[p]="█";
+    title.textContent=arr.join("");
+    setTimeout(()=>title.textContent=base.slice(0,i),60);
+  }
+},120);
 
 // EMOJI ENGINE
 const EMOJI_POOL = [
