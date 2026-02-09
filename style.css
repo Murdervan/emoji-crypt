@@ -105,7 +105,23 @@ button:hover{background:rgba(0,255,0,.12)}
 }
 
 .button-red:hover{background:rgba(255,68,68,.12)}
-.footer{opacity:.6; font-size:11px; margin-top:10px}
+
+.footer{
+  opacity:.6;
+  font-size:11px;
+  margin-top:10px
+}
+
+.footer a{
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: 0 0 6px rgba(0,255,0,.6);
+}
+
+.footer a:hover{
+  text-decoration: underline;
+  text-shadow: 0 0 10px rgba(0,255,0,.9);
+}
 
 /* MOBILE – CLEAN & COMPACT */
 @media (max-width:600px){
