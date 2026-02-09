@@ -1,4 +1,3 @@
-<script>
 // GLITCH TITLE
 const base = ">EMOJI_CRYPT // BY_MURDERVAN";
 const title = document.getElementById("title");
