@@ -1,5 +1,5 @@
 <style>
-:root{
+ :root{
   --bg:#040607;
   --panel:#070b0f;
   --green:#00ff00;
@@ -30,7 +30,6 @@ body{
   color: var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-
 .container{max-width:760px; margin:8vh auto; padding:24px}
 .header{
   font-size:28px;
@@ -138,4 +137,5 @@ button:hover{background:rgba(0,255,0,.12)}
     text-align:center;
     font-size:10px;
   }
+  
 </style>
