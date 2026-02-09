@@ -1,5 +1,4 @@
-<style>
- :root{
+:root{
   --bg:#040607;
   --panel:#070b0f;
   --green:#00ff00;
@@ -137,5 +136,3 @@ button:hover{background:rgba(0,255,0,.12)}
     text-align:center;
     font-size:10px;
   }
-  
-</style>
